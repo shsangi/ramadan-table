@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAE Ramadan Timings 🌙 Sehar & Iftar</title>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9f0f7 100%);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 60px rgba(0, 30, 50, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .title-section h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #0a2a3b, #1b4f6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title-section h1 i {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 50px;
+      box-shadow: 0 10px 20px rgba(0, 50, 70, 0.1);
+      -webkit-text-fill-color: #1b4f6e;
+      font-size: 1.8rem;
+    }
+
+    .hijri-badge {
+      background: rgba(27, 79, 110, 0.1);
+      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 500;
+      color: #1b4f6e;
+      border: 1px solid rgba(27, 79, 110, 0.2);
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .city-selector {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      padding: 0.5rem 1rem 0.5rem 1.5rem;
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0, 40, 60, 0.08);
+    }
+
+    .city-selector label {
+      font-weight: 600;
+      color: #234c66;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .city-selector select {
+      border: none;
+      background: #f0f7fc;
+      padding: 0.7rem 2.2rem 0.7rem 1.2rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #0a2a3b;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23234c66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      min-width: 180px;
+    }
+
+    .today-info {
+      display: flex;
+      gap: 1.5rem;
+      background: white;
+      padding: 0.7rem 2rem;
+      border-radius: 50px;
+      box-shadow: 0 8px 20px rgba(0, 40, 60, 0.08);
+    }
+
+    .today-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1b4f6e;
+      font-weight: 500;
+    }
+
+    .today-info-item i {
+      color: #ffa726;
+    }
+
+    /* Featured Card */
+    .featured-card {
+      background: linear-gradient(135deg, #0f3850, #0b2c40);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 25px 40px -10px rgba(8, 60, 85, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .featured-city {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .featured-city i {
+      font-size: 2rem;
+      color: #ffd966;
+    }
+
+    .featured-city h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .featured-city .today-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      margin-left: 1rem;
+    }
+
+    .featured-times {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .featured-time-block {
+      text-align: center;
+    }
+
+    .featured-time-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    .featured-time-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .featured-time-date {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    /* Grid Header */
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-header h3 {
+      font-size: 1.4rem;
+      color: #0e3b50;
+      font-weight: 600;
+    }
+
+    .count-badge {
+      background: white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 500;
+      color: #1b4f6e;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Timings Grid */
+    .timings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .timing-card {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 40, 60, 0.05);
+      border: 1px solid rgba(190, 215, 235, 0.4);
+      transition: all 0.2s;
+    }
+
+    .timing-card.today {
+      background: #fff9f0;
+      border-left: 5px solid #ffa726;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-city {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0e3b50;
+      text-transform: capitalize;
+    }
+
+    .today-chip {
+      background: #ffa726;
+      color: white;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .card-date {
+      color: #54738f;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-times {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafd;
+      padding: 1rem;
+      border-radius: 1.2rem;
+    }
+
+    .time-col {
+      text-align: center;
+    }
+
+    .time-col i {
+      color: #7f9eb5;
+      font-size: 0.9rem;
+    }
+
+    .time-col .label {
+      font-size: 0.8rem;
+      color: #6f8da5;
+      margin: 4px 0 2px;
+    }
+
+    .time-col .value {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .sehar-value {
+      color: #0d5b8c;
+    }
+
+    .iftar-value {
+      color: #c45d2c;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem;
+      color: #7f9eb5;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #54738f;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 20px;
+    }
+
+    .legend-dot.today {
+      background: #ffa726;
+    }
+
+    .legend-dot.featured {
+      background: #ffd966;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="title-section">
+      <h1>
+        <i class="fas fa-moon"></i>
+        Ramadan Timings
+      </h1>
+    </div>
+    <div class="hijri-badge">
+      <i class="fas fa-calendar-alt"></i> 1447 AH
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="city-selector">
+      <label><i class="fas fa-map-marker-alt"></i> CITY</label>
+      <select id="cityFilter"></select>
+    </div>
+    <div class="today-info" id="todayInfo">
+      <div class="today-info-item">
+        <i class="fas fa-calendar-day"></i>
+        <span id="displayDate">Loading...</span>
+      </div>
+      <div class="today-info-item">
+        <i class="fas fa-moon"></i>
+        <span>Day <span id="displayDay">-</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Section (is_today = TRUE) -->
+  <div id="featuredSection" style="display: none;"></div>
+
+  <div class="grid-header">
+    <h3><i class="far fa-clock"></i> Daily Prayer Times</h3>
+    <span class="count-badge" id="rowCount">0</span>
+  </div>
+
+  <div id="timingsGrid" class="timings-grid"></div>
+
+  <div class="footer">
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-dot today"></span> Today's Date
+      </div>
+      <div class="legend-item">
+        <i class="fas fa-star" style="color: #ffd966;"></i> Featured (is_today)
+      </div>
+    </div>
+    <div>✨ Sehar = Imsak · Iftar = Maghrib</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+  (async function() {
+    const EXCEL_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTHHGzGgCOIU1wFXePrBXtPCdORBq2udUiQu-jd45N3GkWDOnT4iQu0H18ArMVxnU-ohZAbYZZkduAX/pub?output=xlsx';
+    
+    // Helper: Convert Excel time (decimal) to formatted time string (e.g., "5:24 AM")
+    function formatExcelTime(excelTime) {
+      if (!excelTime && excelTime !== 0) return '—';
+      
+      // Handle if it's already a string like "5:24 AM"
+      if (typeof excelTime === 'string') {
+        // Check if it already looks like a time
+        if (excelTime.includes('AM') || excelTime.includes('PM') || excelTime.includes(':')) {
+          return excelTime;
+        }
+      }
+      
+      // Convert Excel decimal to time
+      // Excel stores time as fraction of a day (0.5 = 12:00 PM)
+      const totalSeconds = Math.round(excelTime * 24 * 60 * 60);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      
+      // Format with AM/PM
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const displayHours = hours % 12 || 12;
+      const displayMinutes = minutes.toString().padStart(2, '0');
+      
+      return `${displayHours}:${displayMinutes} ${period}`;
+    }
+
+    // Helper: Format Excel date number to readable date
+    function formatExcelDate(excelDate) {
+      if (!excelDate) return '';
+      
+      // If it's already a string, return as is
+      if (typeof excelDate === 'string') return excelDate;
+      
+      // Excel dates start from 1900-01-01
+      const date = new Date((excelDate - 25569) * 86400 * 1000);
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    }
+
+    let allRows = [];
+    
+    try {
+      const response = await fetch(EXCEL_URL);
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      
+      const sheetName = 'UAE';
+      const worksheet = workbook.Sheets[sheetName] || workbook.Sheets[workbook.SheetNames[0]];
+      
+      // Convert to JSON with header row
+      const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+      if (data.length < 2) throw new Error('Not enough data');
+      
+      // Skip header row (first row)
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.length < 11) continue;
+        
+        const city = row[10]; // Column K
+        if (!city) continue;
+        
+        // Parse is_today from column M (index 12)
+        let isToday = row[12];
+        if (typeof isToday === 'string') {
+          isToday = isToday.toUpperCase() === 'TRUE' || isToday === '1';
+        } else {
+          isToday = Boolean(isToday);
+        }
+        
+        allRows.push({
+          ramadanDay: row[0] || '',
+          weekday: row[1] || '',
+          date: formatExcelDate(row[2]), // Format the date properly
+          sehar: formatExcelTime(row[3]), // Imsak - format time
+          fajr: formatExcelTime(row[4]),
+          sunrise: formatExcelTime(row[5]),
+          dhuhr: formatExcelTime(row[6]),
+          asr: formatExcelTime(row[7]),
+          iftar: formatExcelTime(row[8]), // Maghrib - format time
+          isha: formatExcelTime(row[9]),
+          city: String(city).trim().toLowerCase(),
+          country: row[11] || '',
+          isToday: isToday
+        });
+      }
+      
+      console.log(`Loaded ${allRows.length} rows`);
+      
+    } catch (error) {
+      console.error('Error loading Excel, using demo data:', error);
+      // Demo data with proper formatting
+      allRows = [
+        { ramadanDay: '1', weekday: 'Wednesday', date: '18 February 2026', sehar: '5:24 AM', iftar: '6:18 PM', city: 'dubai', isToday: true },
+        { ramadanDay: '2', weekday: 'Thursday', date: '19 February 2026', sehar: '5:23 AM', iftar: '6:19 PM', city: 'dubai', isToday: false },
+        { ramadanDay: '3', weekday: 'Friday', date: '20 February 2026', sehar: '5:22 AM', iftar: '6:19 PM', city: 'dubai', isToday: false },
+        { ramadanDay: '4', weekday: 'Saturday', date: '21 February 2026', sehar: '5:21 AM', iftar: '6:20 PM', city: 'dubai', isToday: false },
+        { ramadanDay: '5', weekday: 'Sunday', date: '22 February 2026', sehar: '5:21 AM', iftar: '6:20 PM', city: 'dubai', isToday: false }
+      ];
+    }
+
+    // Get unique cities
+    const cities = [...new Set(allRows.map(r => r.city))].filter(Boolean).sort();
+    
+    // Populate dropdown
+    const citySelect = document.getElementById('cityFilter');
+    cities.forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city.charAt(0).toUpperCase() + city.slice(1);
+      citySelect.appendChild(option);
+    });
+    
+    // Set default to Dubai
+    const defaultCity = cities.find(c => c === 'dubai') || cities[0] || 'dubai';
+    citySelect.value = defaultCity;
+
+    // DOM elements
+    const featuredSection = document.getElementById('featuredSection');
+    const timingsGrid = document.getElementById('timingsGrid');
+    const rowCountSpan = document.getElementById('rowCount');
+    const displayDateSpan = document.getElementById('displayDate');
+    const displayDaySpan = document.getElementById('displayDay');
+
+    function renderTable(selectedCity) {
+      const cityRows = allRows.filter(row => row.city === selectedCity);
+      const todayRow = cityRows.find(row => row.isToday) || null;
+      
+      // Update today info
+      if (todayRow) {
+        displayDateSpan.textContent = todayRow.date;
+        displayDaySpan.textContent = todayRow.ramadanDay;
+      } else if (cityRows.length > 0) {
+        displayDateSpan.textContent = cityRows[0].date;
+        displayDaySpan.textContent = cityRows[0].ramadanDay;
+      }
+      
+      // Render featured section
+      if (todayRow) {
+        featuredSection.style.display = 'block';
+        featuredSection.innerHTML = `
+          <div class="featured-card">
+            <div class="featured-city">
+              <i class="fas fa-crown"></i>
+              <div>
+                <h2>${todayRow.city.charAt(0).toUpperCase() + todayRow.city.slice(1)}</h2>
+                <span class="today-badge"><i class="fas fa-calendar-check"></i> TODAY</span>
+              </div>
+            </div>
+            <div class="featured-times">
+              <div class="featured-time-block">
+                <div class="featured-time-label"><i class="fas fa-moon"></i> SEHAR (IMSAK)</div>
+                <div class="featured-time-value">${todayRow.sehar}</div>
+                <div class="featured-time-date">Ramadan ${todayRow.ramadanDay}</div>
+              </div>
+              <div class="featured-time-block">
+                <div class="featured-time-label"><i class="fas fa-sun"></i> IFTAR (MAGHRIB)</div>
+                <div class="featured-time-value">${todayRow.iftar}</div>
+                <div class="featured-time-date">${todayRow.weekday}, ${todayRow.date}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        featuredSection.style.display = 'none';
+      }
+      
+      // Render grid
+      if (cityRows.length === 0) {
+        timingsGrid.innerHTML = `<div class="empty-state"><i class="fas fa-map-marker-alt"></i> No timings found for ${selectedCity}</div>`;
+        rowCountSpan.textContent = '0';
+        return;
+      }
+      
+      let gridHtml = '';
+      cityRows.forEach(row => {
+        gridHtml += `
+          <div class="timing-card ${row.isToday ? 'today' : ''}">
+            <div class="card-header">
+              <span class="card-city">
+                ${row.city}
+                ${row.isToday ? '<i class="fas fa-star" style="color: #ffa726; margin-left: 6px;"></i>' : ''}
+              </span>
+              ${row.isToday ? '<span class="today-chip">TODAY</span>' : ''}
+            </div>
+            <div class="card-date">
+              <i class="far fa-calendar-alt"></i> Day ${row.ramadanDay}: ${row.weekday}, ${row.date}
+            </div>
+            <div class="card-times">
+              <div class="time-col">
+                <i class="fas fa-moon"></i>
+                <div class="label">SEHAR</div>
+                <div class="value sehar-value">${row.sehar}</div>
+              </div>
+              <div class="time-col">
+                <i class="fas fa-sun"></i>
+                <div class="label">IFTAR</div>
+                <div class="value iftar-value">${row.iftar}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      timingsGrid.innerHTML = gridHtml;
+      rowCountSpan.textContent = cityRows.length;
+    }
+
+    // Initial render
+    renderTable(defaultCity);
+    
+    // Dropdown change handler
+    citySelect.addEventListener('change', (e) => {
+      renderTable(e.target.value);
+    });
+
+  })();
+</script>
+</body>
+</html>
