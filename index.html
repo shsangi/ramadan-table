@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Karachi Ramadan Timer 2026</title>
     <style>
-        /* Inline styles to ensure they work in Google Sites */
+        /* All your existing styles remain exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -34,7 +34,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
-        /* Simple title that will definitely show */
         .app-title {
             background: #1E2B4F;
             padding: 20px 15px;
@@ -49,11 +48,6 @@
             margin: 0;
             padding: 0;
             line-height: 1.3;
-        }
-
-        .app-title h1 span {
-            display: inline-block;
-            margin: 0 5px;
         }
 
         .app-title .sub {
@@ -146,6 +140,7 @@
             text-align: center;
             border: 1px solid #333;
             position: relative;
+            cursor: pointer;
         }
 
         .time-block.next-event {
@@ -293,6 +288,20 @@
             color: #E5C76B;
         }
 
+        .creator {
+            color: #E5C76B;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.2s ease;
+        }
+
+        .creator:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
         @media (max-width: 380px) {
             .app-title h1 {
                 font-size: 24px;
@@ -321,7 +330,6 @@
 <body>
     <div class="container">
         <div class="main-card">
-            <!-- Simple text title with current time in subtitle -->
             <div class="app-title">
                 <h1>🌙 Karachi Ramadan Timer</h1>
                 <div class="sub" id="timeSubtitle">
@@ -329,31 +337,29 @@
                 </div>
             </div>
 
-            <!-- Today's Card -->
             <div class="today-card">
                 <div class="today-header">
                     <div class="today-icon">🌟</div>
                     <div>
-                        <div class="today-day" id="today-day">Friday</div>
-                        <div class="today-date" id="today-date">February 20, 2026</div>
+                        <div class="today-day" id="today-day">Loading...</div>
+                        <div class="today-date" id="today-date">Loading...</div>
                     </div>
-                    <div class="day-badge" id="day-badge">Day 2</div>
+                    <div class="day-badge" id="day-badge">Day -</div>
                 </div>
                 <div class="today-times">
                     <div class="time-block" id="seharBlock">
                         <div class="time-label">🌙 Sehar</div>
-                        <div class="time-value" id="sehar-time">5:35 <span class="time-ampm">AM</span></div>
-                        <div class="next-counter" id="seharCounter" style="display: none;">05:30:00</div>
+                        <div class="time-value" id="sehar-time">--:-- <span class="time-ampm">AM</span></div>
+                        <div class="next-counter" id="seharCounter" style="display: none;">00:00:00</div>
                     </div>
                     <div class="time-block" id="iftarBlock">
                         <div class="time-label">⭐ Iftar</div>
-                        <div class="time-value" id="iftar-time">6:40 <span class="time-ampm">PM</span></div>
-                        <div class="next-counter" id="iftarCounter" style="display: none;">05:30:00</div>
+                        <div class="time-value" id="iftar-time">--:-- <span class="time-ampm">PM</span></div>
+                        <div class="next-counter" id="iftarCounter" style="display: none;">00:00:00</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Calendar Table -->
             <div class="table-section">
                 <div class="table-header">
                     <h3>📅 Ramadan Calendar</h3>
@@ -376,18 +382,19 @@
                 </div>
             </div>
 
-            <!-- Footer with location only -->
             <div class="footer">
-
                 <div class="location">
-                    <span>🕋</span> Ramadan 2026
+                    <span>📍</span> Karachi, Pakistan
                 </div>
+                <a href="https://sites.google.com/view/sheeraz-hussain/home?authuser=0" target="_blank" class="creator">
+                    <span>👨‍💻</span> Sheeraz
+                </a>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple data array
+        // Karachi Ramadan Data 2026 - Starts February 19, 2026 (Thursday)
         const ramadanData = [
             [1, "Thursday", "2/19/2026", "5:36", "6:39"],
             [2, "Friday", "2/20/2026", "5:35", "6:40"],
@@ -421,15 +428,42 @@
             [30, "Friday", "3/20/2026", "5:09", "6:54"]
         ];
 
+        // Store current date to detect changes
+        let currentDateStr = '';
+
         // Pakistan Time (UTC+5)
         function getPakistanTime() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            return new Date(utc + (3600000 * 5));
+            return new Date(utc + (3600000 * 5)); // Pakistan is UTC+5
         }
 
+        // DYNAMIC: Get today's data based on actual date
         function getTodayData() {
-            return ramadanData[1]; // Day 2 for demo
+            const today = getPakistanTime();
+            const todayStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+            
+            // Check if date changed
+            if (currentDateStr !== todayStr) {
+                console.log(`Date changed from ${currentDateStr} to ${todayStr}`);
+                currentDateStr = todayStr;
+                // Date changed, trigger re-render
+                setTimeout(() => {
+                    renderTable();
+                    updateDisplay();
+                }, 100);
+            }
+            
+            // Find today's date in the data
+            const todayRow = ramadanData.find(row => row[2] === todayStr);
+            
+            if (todayRow) {
+                return todayRow; // Return actual today's data
+            } else {
+                // If date not found (before Ramadan or after), return first day
+                console.log("Date not in Ramadan range, showing Day 1");
+                return ramadanData[0];
+            }
         }
 
         function parseTimeToDate(timeStr, isPM) {
@@ -444,6 +478,12 @@
         function getNextEvent() {
             const now = getPakistanTime();
             const today = getTodayData();
+            
+            // If no today data, return default
+            if (!today) {
+                return { type: 'sehar', time: now };
+            }
+            
             const seharTime = parseTimeToDate(today[3], false);
             const iftarTime = parseTimeToDate(today[4], true);
             
@@ -452,12 +492,18 @@
             } else if (now >= seharTime && now < iftarTime) {
                 return { type: 'iftar', time: iftarTime };
             } else {
-                const tomorrowIndex = today[0] === 30 ? 0 : today[0];
-                const tomorrow = ramadanData[tomorrowIndex];
-                const tomorrowSehar = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 
-                                               parseInt(tomorrow[3].split(':')[0]), 
-                                               parseInt(tomorrow[3].split(':')[1]), 0);
-                return { type: 'sehar', time: tomorrowSehar };
+                // Check if tomorrow exists in data
+                const tomorrowIndex = today[0]; // Current day number (1-30)
+                if (tomorrowIndex < 30) {
+                    const tomorrow = ramadanData[tomorrowIndex]; // Next day in array
+                    const tomorrowSehar = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 
+                                                   parseInt(tomorrow[3].split(':')[0]), 
+                                                   parseInt(tomorrow[3].split(':')[1]), 0);
+                    return { type: 'sehar', time: tomorrowSehar };
+                } else {
+                    // Last day of Ramadan, no tomorrow
+                    return { type: 'iftar', time: iftarTime, isLast: true };
+                }
             }
         }
 
@@ -475,9 +521,8 @@
             const seconds = date.getSeconds().toString().padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
             
-            // Convert to 12-hour format
             hours = hours % 12;
-            hours = hours ? hours : 12; // 0 should be 12
+            hours = hours ? hours : 12;
             
             return {
                 time: `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`,
@@ -491,13 +536,11 @@
             const diffMs = nextEvent.time - now;
             const countdownStr = formatCountdown(diffMs);
             
-            // Hide both counters
             document.getElementById('seharCounter').style.display = 'none';
             document.getElementById('iftarCounter').style.display = 'none';
             document.getElementById('seharBlock').classList.remove('next-event');
             document.getElementById('iftarBlock').classList.remove('next-event');
             
-            // Show counter for next event
             if (nextEvent.type === 'sehar') {
                 document.getElementById('seharCounter').style.display = 'inline-block';
                 document.getElementById('seharBlock').classList.add('next-event');
@@ -508,7 +551,6 @@
                 document.getElementById('iftarCounter').textContent = countdownStr;
             }
             
-            // Update subtitle time with AM/PM
             const formatted = formatTimeWithAmPm(now);
             document.getElementById('currentTimeSub').textContent = formatted.time;
             document.getElementById('currentAmPmSub').textContent = formatted.ampm;
@@ -529,6 +571,9 @@
         function renderTable() {
             const tbody = document.getElementById('table-body');
             const today = getTodayData();
+            
+            if (!today) return;
+            
             let html = '';
             
             ramadanData.forEach(row => {
@@ -546,7 +591,7 @@
             
             tbody.innerHTML = html;
             
-            // Update today card
+            // Update today card with dynamic data
             const td = today;
             document.getElementById('today-day').textContent = td[1];
             document.getElementById('today-date').textContent = formatDateLong(td[2]);
@@ -555,10 +600,35 @@
             document.getElementById('iftar-time').innerHTML = `${td[4]} <span class="time-ampm">PM</span>`;
         }
 
-        // Start everything
+        // Initialize everything
         renderTable();
         updateDisplay();
+        
+        // Update counter every second
         setInterval(updateDisplay, 1000);
+        
+        // Check for date change every second (more reliable)
+        setInterval(() => {
+            const today = getPakistanTime();
+            const todayStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+            
+            // If date changed, re-render everything
+            if (currentDateStr !== todayStr) {
+                console.log('Date changed, updating display...');
+                renderTable();
+                updateDisplay();
+            }
+        }, 1000); // Check every second for date change
+        
+        // Also check at exact midnight
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() < 2) {
+                console.log('Midnight detected, forcing update...');
+                renderTable();
+                updateDisplay();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
