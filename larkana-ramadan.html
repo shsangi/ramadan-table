@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Karachi Ramadan Timer 2026</title>
+    <style>
+        /* All your existing styles remain exactly the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0A1428;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: #121625;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid #333;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .app-title {
+            background: #1E2B4F;
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 2px solid #C9A234;
+        }
+
+        .app-title h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            line-height: 1.3;
+        }
+
+        .app-title .sub {
+            color: #E5C76B;
+            font-size: 18px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #0A1428;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid #C9A234;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .app-title .sub .time-now {
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .app-title .sub .ampm-now {
+            color: #E5C76B;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .today-card {
+            background: #1A1F35;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid #C9A234;
+        }
+
+        .today-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .today-icon {
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            background: #2A3F6E;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .today-day {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .today-date {
+            font-size: 14px;
+            color: #E5C76B;
+        }
+
+        .day-badge {
+            background: #2A3F6E;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #E5C76B;
+            margin-left: auto;
+        }
+
+        .today-times {
+            display: flex;
+            gap: 10px;
+        }
+
+        .time-block {
+            flex: 1;
+            background: #0A1428;
+            border-radius: 18px;
+            padding: 15px 5px;
+            text-align: center;
+            border: 1px solid #333;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .time-block.next-event {
+            border: 2px solid #10b981;
+            background: #0A1F1A;
+        }
+
+        .time-label {
+            font-size: 13px;
+            color: #E5C76B;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .time-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .time-ampm {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .next-counter {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .table-section {
+            padding: 0 15px 20px;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 0 5px;
+        }
+
+        .table-header h3 {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .legend {
+            display: flex;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: #C9A234;
+        }
+
+        .table-wrapper {
+            background: #0A1428;
+            border-radius: 20px;
+            padding: 2px;
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            color: white;
+        }
+
+        th {
+            background: #1A1F35;
+            color: #E5C76B;
+            font-weight: bold;
+            padding: 12px 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px 5px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .today-row {
+            background: #2A3F6E;
+        }
+
+        .time {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            background: #1A1F35;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .day-cell {
+            font-weight: bold;
+            color: #E5C76B;
+        }
+
+        .date-cell {
+            color: #999;
+        }
+
+        .footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #E5C76B;
+        }
+
+        .creator {
+            color: #E5C76B;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.2s ease;
+        }
+
+        .creator:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 380px) {
+            .app-title h1 {
+                font-size: 24px;
+            }
+            .app-title .sub {
+                font-size: 16px;
+                flex-wrap: wrap;
+            }
+            .app-title .sub .time-now {
+                font-size: 18px;
+            }
+            .today-times {
+                flex-direction: column;
+            }
+            .time-value {
+                font-size: 20px;
+            }
+            .footer {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-card">
+            <div class="app-title">
+                <h1>🌙 Karachi Ramadan Timer</h1>
+                <div class="sub" id="timeSubtitle">
+                    <span>⏰</span> Time Now: <span class="time-now" id="currentTimeSub">12:00:00</span><span class="ampm-now" id="currentAmPmSub">PM</span>
+                </div>
+            </div>
+
+            <div class="today-card">
+                <div class="today-header">
+                    <div class="today-icon">🌟</div>
+                    <div>
+                        <div class="today-day" id="today-day">Loading...</div>
+                        <div class="today-date" id="today-date">Loading...</div>
+                    </div>
+                    <div class="day-badge" id="day-badge">Day -</div>
+                </div>
+                <div class="today-times">
+                    <div class="time-block" id="seharBlock">
+                        <div class="time-label">🌙 Sehar</div>
+                        <div class="time-value" id="sehar-time">--:-- <span class="time-ampm">AM</span></div>
+                        <div class="next-counter" id="seharCounter" style="display: none;">00:00:00</div>
+                    </div>
+                    <div class="time-block" id="iftarBlock">
+                        <div class="time-label">⭐ Iftar</div>
+                        <div class="time-value" id="iftar-time">--:-- <span class="time-ampm">PM</span></div>
+                        <div class="next-counter" id="iftarCounter" style="display: none;">00:00:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>📅 Ramadan Calendar</h3>
+                    <div class="legend">
+                        <div class="legend-item"><span class="legend-dot"></span> Today</div>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Date</th>
+                                <th>Sehar</th>
+                                <th>Iftar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="location">
+                    <span>📍</span> Karachi, Pakistan
+                </div>
+                <a href="https://sites.google.com/view/sheeraz-hussain/home?authuser=0" target="_blank" class="creator">
+                    <span>👨‍💻</span> Sheeraz
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Karachi Ramadan Data 2026 - Starts February 19, 2026 (Thursday)
+        const ramadanData = [
+    [1, "Thursday", "2/19/2026", "5:32", "6:32"],
+    [2, "Friday", "2/20/2026", "5:31", "6:33"],
+    [3, "Saturday", "2/21/2026", "5:30", "6:34"],
+    [4, "Sunday", "2/22/2026", "5:29", "6:34"],
+    [5, "Monday", "2/23/2026", "5:29", "6:35"],
+    [6, "Tuesday", "2/24/2026", "5:28", "6:35"],
+    [7, "Wednesday", "2/25/2026", "5:27", "6:36"],
+    [8, "Thursday", "2/26/2026", "5:26", "6:37"],
+    [9, "Friday", "2/27/2026", "5:25", "6:37"],
+    [10, "Saturday", "2/28/2026", "5:24", "6:38"],
+    [11, "Sunday", "3/1/2026", "5:23", "6:39"],
+    [12, "Monday", "3/2/2026", "5:22", "6:39"],
+    [13, "Tuesday", "3/3/2026", "5:21", "6:40"],
+    [14, "Wednesday", "3/4/2026", "5:20", "6:40"],
+    [15, "Thursday", "3/5/2026", "5:19", "6:41"],
+    [16, "Friday", "3/6/2026", "5:18", "6:42"],
+    [17, "Saturday", "3/7/2026", "5:17", "6:42"],
+    [18, "Sunday", "3/8/2026", "5:16", "6:43"],
+    [19, "Monday", "3/9/2026", "5:15", "6:43"],
+    [20, "Tuesday", "3/10/2026", "5:14", "6:44"],
+    [21, "Wednesday", "3/11/2026", "5:13", "6:44"],
+    [22, "Thursday", "3/12/2026", "5:12", "6:45"],
+    [23, "Friday", "3/13/2026", "5:11", "6:46"],
+    [24, "Saturday", "3/14/2026", "5:10", "6:46"],
+    [25, "Sunday", "3/15/2026", "5:08", "6:47"],
+    [26, "Monday", "3/16/2026", "5:07", "6:47"],
+    [27, "Tuesday", "3/17/2026", "5:06", "6:48"],
+    [28, "Wednesday", "3/18/2026", "5:05", "6:48"],
+    [29, "Thursday", "3/19/2026", "5:04", "6:49"],
+    [30, "Friday", "3/20/2026", "5:03", "6:49"]
+];
+
+        // Store current date to detect changes
+        let currentDateStr = '';
+
+        // Pakistan Time (UTC+5)
+        function getPakistanTime() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utc + (3600000 * 5)); // Pakistan is UTC+5
+        }
+
+        // DYNAMIC: Get today's data based on actual date
+        function getTodayData() {
+            const today = getPakistanTime();
+            const todayStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+            
+            // Check if date changed
+            if (currentDateStr !== todayStr) {
+                console.log(`Date changed from ${currentDateStr} to ${todayStr}`);
+                currentDateStr = todayStr;
+                // Date changed, trigger re-render
+                setTimeout(() => {
+                    renderTable();
+                    updateDisplay();
+                }, 100);
+            }
+            
+            // Find today's date in the data
+            const todayRow = ramadanData.find(row => row[2] === todayStr);
+            
+            if (todayRow) {
+                return todayRow; // Return actual today's data
+            } else {
+                // If date not found (before Ramadan or after), return first day
+                console.log("Date not in Ramadan range, showing Day 1");
+                return ramadanData[0];
+            }
+        }
+
+        function parseTimeToDate(timeStr, isPM) {
+            const today = getPakistanTime();
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            let hour = hours;
+            if (isPM && hour !== 12) hour += 12;
+            if (!isPM && hour === 12) hour = 0;
+            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour, minutes, 0);
+        }
+
+        function getNextEvent() {
+            const now = getPakistanTime();
+            const today = getTodayData();
+            
+            // If no today data, return default
+            if (!today) {
+                return { type: 'sehar', time: now };
+            }
+            
+            const seharTime = parseTimeToDate(today[3], false);
+            const iftarTime = parseTimeToDate(today[4], true);
+            
+            if (now < seharTime) {
+                return { type: 'sehar', time: seharTime };
+            } else if (now >= seharTime && now < iftarTime) {
+                return { type: 'iftar', time: iftarTime };
+            } else {
+                // Check if tomorrow exists in data
+                const tomorrowIndex = today[0]; // Current day number (1-30)
+                if (tomorrowIndex < 30) {
+                    const tomorrow = ramadanData[tomorrowIndex]; // Next day in array
+                    const tomorrowSehar = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 
+                                                   parseInt(tomorrow[3].split(':')[0]), 
+                                                   parseInt(tomorrow[3].split(':')[1]), 0);
+                    return { type: 'sehar', time: tomorrowSehar };
+                } else {
+                    // Last day of Ramadan, no tomorrow
+                    return { type: 'iftar', time: iftarTime, isLast: true };
+                }
+            }
+        }
+
+        function formatCountdown(ms) {
+            if (ms < 0) ms = 0;
+            const hrs = Math.floor(ms / 3600000);
+            const mins = Math.floor((ms % 3600000) / 60000);
+            const secs = Math.floor((ms % 60000) / 1000);
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatTimeWithAmPm(date) {
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            return {
+                time: `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`,
+                ampm: ampm
+            };
+        }
+
+        function updateDisplay() {
+            const now = getPakistanTime();
+            const nextEvent = getNextEvent();
+            const diffMs = nextEvent.time - now;
+            const countdownStr = formatCountdown(diffMs);
+            
+            document.getElementById('seharCounter').style.display = 'none';
+            document.getElementById('iftarCounter').style.display = 'none';
+            document.getElementById('seharBlock').classList.remove('next-event');
+            document.getElementById('iftarBlock').classList.remove('next-event');
+            
+            if (nextEvent.type === 'sehar') {
+                document.getElementById('seharCounter').style.display = 'inline-block';
+                document.getElementById('seharBlock').classList.add('next-event');
+                document.getElementById('seharCounter').textContent = countdownStr;
+            } else {
+                document.getElementById('iftarCounter').style.display = 'inline-block';
+                document.getElementById('iftarBlock').classList.add('next-event');
+                document.getElementById('iftarCounter').textContent = countdownStr;
+            }
+            
+            const formatted = formatTimeWithAmPm(now);
+            document.getElementById('currentTimeSub').textContent = formatted.time;
+            document.getElementById('currentAmPmSub').textContent = formatted.ampm;
+        }
+
+        function formatDateShort(dateStr) {
+            const [month, day] = dateStr.split('/');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[parseInt(month)-1]} ${day}`;
+        }
+
+        function formatDateLong(dateStr) {
+            const [month, day, year] = dateStr.split('/');
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${months[parseInt(month)-1]} ${day}, ${year}`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            const today = getTodayData();
+            
+            if (!today) return;
+            
+            let html = '';
+            
+            ramadanData.forEach(row => {
+                const isToday = row[0] === today[0];
+                const rowClass = isToday ? 'class="today-row"' : '';
+                const dayDisplay = `${row[0]}<br><span style="font-size:10px;color:#999;">${row[1]}</span>`;
+                
+                html += `<tr ${rowClass}>
+                    <td class="day-cell">${dayDisplay}</td>
+                    <td class="date-cell">${formatDateShort(row[2])}</td>
+                    <td><span class="time">${row[3]} <span style="font-size:9px;color:#999;">AM</span></span></td>
+                    <td><span class="time">${row[4]} <span style="font-size:9px;color:#999;">PM</span></span></td>
+                </tr>`;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Update today card with dynamic data
+            const td = today;
+            document.getElementById('today-day').textContent = td[1];
+            document.getElementById('today-date').textContent = formatDateLong(td[2]);
+            document.getElementById('day-badge').textContent = `Day ${td[0]}`;
+            document.getElementById('sehar-time').innerHTML = `${td[3]} <span class="time-ampm">AM</span>`;
+            document.getElementById('iftar-time').innerHTML = `${td[4]} <span class="time-ampm">PM</span>`;
+        }
+
+        // Initialize everything
+        renderTable();
+        updateDisplay();
+        
+        // Update counter every second
+        setInterval(updateDisplay, 1000);
+        
+        // Check for date change every second (more reliable)
+        setInterval(() => {
+            const today = getPakistanTime();
+            const todayStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+            
+            // If date changed, re-render everything
+            if (currentDateStr !== todayStr) {
+                console.log('Date changed, updating display...');
+                renderTable();
+                updateDisplay();
+            }
+        }, 1000); // Check every second for date change
+        
+        // Also check at exact midnight
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() < 2) {
+                console.log('Midnight detected, forcing update...');
+                renderTable();
+                updateDisplay();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
