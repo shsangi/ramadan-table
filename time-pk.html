@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>black · white · fullscreen relative</title>
+    <title>black · white · no scroll · relative</title>
     <style>
-        /* relative to all screens: uses viewport units & flexible sizing */
+        /* reset everything to prevent any overflow */
         * {
             margin: 0;
             padding: 0;
@@ -15,91 +15,83 @@
         html, body {
             background: black;
             width: 100%;
-            min-height: 100vh;
+            height: 100vh;              /* exact viewport height */
+            height: 100dvh;              /* dynamic viewport height (modern) */
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Courier New', monospace;
-            /* ensure no unwanted margins */
-            overflow-x: hidden;
+            overflow: hidden;            /* 🔥 KILLS ALL SCROLLBARS 🔥 */
         }
 
-        /* container that always fits the screen */
+        /* container that fits exactly inside viewport */
         .time-container {
             display: flex;
             align-items: baseline;
             justify-content: center;
-            flex-wrap: wrap;           /* AM/PM goes to new line only if extremely narrow */
-            gap: 0.5vw;                /* gap relative to viewport width */
+            flex-wrap: wrap;
+            gap: 0.5vw;
             background: black;
             width: 100%;
-            padding: 2vw;
-            line-height: 1.1;
+            padding: 0;                   /* no padding that could overflow */
+            line-height: 1;
+            height: fit-content;           /* only takes needed space */
+            max-height: 100vh;              /* never exceed viewport */
         }
 
-        /* time uses viewport width for size, but also clamps for huge screens */
+        /* time uses viewport-clamped sizes */
         .time {
-            font-size: clamp(3rem, 20vw, 25vh);  /* relative to both width and height */
+            font-size: clamp(2rem, 18vw, 22vh);
             font-weight: 700;
             color: white;
             background: black;
-            letter-spacing: 0.5vw;
-            text-shadow: none;
-            white-space: nowrap;                  /* keep time in one line */
+            letter-spacing: 0.3vw;
+            white-space: nowrap;
             line-height: 1;
         }
 
-        /* am/pm scales with viewport, stays proportional */
         .ampm {
-            font-size: clamp(1.5rem, 10vw, 12vh);
+            font-size: clamp(1.2rem, 8vw, 10vh);
             font-weight: 400;
             color: white;
             background: black;
             opacity: 0.9;
             white-space: nowrap;
             line-height: 1;
-            margin-left: 0.2vw;
         }
 
-        /* for very small devices, allow tiny wrap if needed, but time remains biggest */
-        @media (max-aspect-ratio: 1/1) and (max-width: 480px) {
-            .time-container {
-                gap: 1vw;
-            }
+        /* even on the tiniest screens, nothing overflows */
+        @media (max-width: 300px) {
             .time {
-                font-size: clamp(2.8rem, 18vw, 20vh);
+                font-size: 16vw;           /* safe tiny size */
             }
             .ampm {
-                font-size: clamp(1.3rem, 8vw, 10vh);
+                font-size: 7vw;
             }
         }
 
-        /* landscape: use height as reference so it's still huge */
-        @media (min-aspect-ratio: 16/9) {
+        /* landscape safe */
+        @media (orientation: landscape) and (max-height: 400px) {
             .time {
-                font-size: clamp(3rem, 15vh, 25vh);
+                font-size: 15vh;
             }
             .ampm {
-                font-size: clamp(1.5rem, 7vh, 12vh);
+                font-size: 6vh;
             }
         }
-
-        /* absolutely nothing else – only time + am/pm, black background, white fonts */
     </style>
 </head>
 <body>
-    <!-- one flexible line: time + AM/PM, always relative to screen dimensions -->
     <div class="time-container">
         <span class="time" id="currentTime">12:00:00</span>
         <span class="ampm" id="currentAmPm">PM</span>
     </div>
 
     <script>
-        // Pakistan time (UTC+5) – reliable and used only for current time
         function getPakistanTime() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            return new Date(utc + (3600000 * 5)); // UTC+5
+            return new Date(utc + (3600000 * 5));
         }
 
         function formatTimeWithAmPm(date) {
@@ -107,10 +99,7 @@
             const minutes = date.getMinutes().toString().padStart(2, '0');
             const seconds = date.getSeconds().toString().padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
-
-            hours = hours % 12;
-            hours = hours ? hours : 12; // 12-hour format
-
+            hours = hours % 12 || 12;
             return {
                 time: `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`,
                 ampm: ampm
