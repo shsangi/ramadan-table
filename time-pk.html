@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>full fit · no overlap</title>
+    <title>full stretch · edge to edge</title>
     <style>
-        /* absolute zero */
+        /* ABSOLUTE ZERO MARGINS */
         * {
             margin: 0;
             padding: 0;
@@ -18,106 +18,145 @@
             height: 100vh;
             height: 100dvh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Courier New', monospace;
             overflow: hidden;
+            font-family: 'Courier New', monospace;
         }
 
-        /* container fills area but prevents overlap */
-        .time-container {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 0.5vw;
+        /* SINGLE LAYER - FULL STRETCH */
+        .time-wrapper {
             background: black;
             width: 100%;
             height: 100%;
-            padding: 2vh 2vw;              /* safe breathing room */
-            margin: 0;
-            flex-wrap: nowrap;
-            white-space: nowrap;
+            display: flex;
+            align-items: stretch;        /* stretch vertically */
+            justify-content: stretch;    /* stretch horizontally */
+            overflow: hidden;
+            padding: 0;                  /* no padding */
+            margin: 0;                   /* no margin */
         }
 
-        /* time with safe sizing */
+        /* CONTAINER FILLS EVERY PIXEL */
+        .time-container {
+            display: flex;
+            align-items: center;          /* vertical center */
+            justify-content: center;      /* horizontal center */
+            gap: 0;                       /* no gap */
+            background: black;
+            width: 100%;
+            height: 100%;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            transform: scale(1);           /* prevent scaling artifacts */
+        }
+
+        /* TIME STRETCHES TO MAXIMUM */
         .time {
-            font-size: clamp(2rem, 15vh, 20vh);  /* controlled growth */
+            font-size: 100vh;              /* base: full height */
             font-weight: 700;
             color: white;
             background: black;
-            letter-spacing: 0.2vw;
+            letter-spacing: -0.5vw;        /* tighten spacing */
             white-space: nowrap;
             line-height: 1;
             display: flex;
             align-items: center;
+            height: 100%;
             flex-shrink: 1;
             min-width: 0;
-            max-width: 80%;                      /* prevent pushing into AM/PM */
+            transform: scale(1);
+            margin: 0 -0.1vw;               /* micro adjustment for edges */
+            text-rendering: optimizeLegibility;
         }
 
-        /* am/pm with fixed proportion */
+        /* AM/PM STRETCHES PROPORTIONALLY */
         .ampm {
-            font-size: clamp(1.2rem, 6vh, 8vh);  /* always smaller than time */
+            font-size: 40vh;                /* 40% of time height */
             font-weight: 400;
             color: white;
             background: black;
-            opacity: 0.9;
+            opacity: 0.95;
             white-space: nowrap;
             line-height: 1;
             display: flex;
             align-items: center;
+            height: 100%;
             flex-shrink: 0;
-            max-width: 20%;                       /* reserve space */
+            margin-left: -0.2vw;            /* pull closer */
         }
 
-        /* ultra wide screens */
+        /* DYNAMIC SIZING WITH JAVASCRIPT PRECISION */
+        .dynamic-size {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ULTRA WIDE - USE FULL WIDTH */
         @media (min-aspect-ratio: 3/1) {
             .time {
-                font-size: 25vh;
-                max-width: 85%;
+                font-size: 110vh;            /* even bigger for wide */
+                letter-spacing: -1vw;
             }
             .ampm {
-                font-size: 10vh;
-                max-width: 15%;
+                font-size: 44vh;
             }
         }
 
-        /* very tall screens */
-        @media (max-aspect-ratio: 1/2) {
+        /* ULTRA TALL - USE FULL HEIGHT WITH WIDTH CONSTRAINT */
+        @media (max-aspect-ratio: 1/3) {
             .time {
-                font-size: 12vw;
-                max-width: 75%;
+                font-size: 90vw;              /* switch to width-based */
             }
             .ampm {
-                font-size: 5vw;
-                max-width: 25%;
+                font-size: 36vw;
             }
         }
 
-        /* tiny screens safety */
+        /* PERFECT SQUARE ADJUSTMENT */
+        @media (aspect-ratio: 1/1) {
+            .time {
+                font-size: 95vh;
+            }
+            .ampm {
+                font-size: 38vh;
+            }
+        }
+
+        /* TINY SCREENS - EDGE TO EDGE */
         @media (max-width: 300px) or (max-height: 300px) {
             .time {
-                font-size: 12vw;
+                font-size: 90vw;
+                letter-spacing: -0.8vw;
             }
             .ampm {
-                font-size: 5vw;
+                font-size: 36vw;
             }
         }
     </style>
 </head>
 <body>
-    <div class="time-container">
-        <span class="time" id="currentTime">12:00:00</span>
-        <span class="ampm" id="currentAmPm">PM</span>
+    <!-- SINGLE LAYER - STRETCHED TO EDGES -->
+    <div class="time-wrapper">
+        <div class="time-container">
+            <span class="time" id="currentTime">12:00:00</span>
+            <span class="ampm" id="currentAmPm">PM</span>
+        </div>
     </div>
 
     <script>
+        // PAKISTAN TIME (UTC+5)
         function getPakistanTime() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             return new Date(utc + (3600000 * 5));
         }
 
+        // FORMAT TIME WITH AM/PM
         function formatTimeWithAmPm(date) {
             let hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -130,6 +169,7 @@
             };
         }
 
+        // UPDATE DISPLAY
         function updateDisplay() {
             const now = getPakistanTime();
             const formatted = formatTimeWithAmPm(now);
@@ -137,8 +177,47 @@
             document.getElementById('currentAmPm').textContent = formatted.ampm;
         }
 
-        updateDisplay();
+        // DYNAMIC RESIZE FOR PERFECT FIT
+        function adjustFontSize() {
+            const container = document.querySelector('.time-container');
+            const time = document.querySelector('.time');
+            const ampm = document.querySelector('.ampm');
+            
+            if (!container || !time || !ampm) return;
+            
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            
+            // Choose primary dimension based on aspect ratio
+            if (containerWidth > containerHeight * 1.5) {
+                // Wide: use height
+                time.style.fontSize = (containerHeight * 0.95) + 'px';
+                ampm.style.fontSize = (containerHeight * 0.38) + 'px';
+            } else if (containerHeight > containerWidth * 1.5) {
+                // Tall: use width
+                time.style.fontSize = (containerWidth * 0.9) + 'px';
+                ampm.style.fontSize = (containerWidth * 0.36) + 'px';
+            } else {
+                // Square-ish: use smaller dimension
+                const base = Math.min(containerWidth, containerHeight);
+                time.style.fontSize = (base * 0.95) + 'px';
+                ampm.style.fontSize = (base * 0.38) + 'px';
+            }
+        }
+
+        // Call on load and resize
+        window.addEventListener('load', () => {
+            updateDisplay();
+            adjustFontSize();
+        });
+        
+        window.addEventListener('resize', adjustFontSize);
+        
+        // Update time every second
         setInterval(updateDisplay, 1000);
+        
+        // Also adjust size if content changes (every second)
+        setInterval(adjustFontSize, 100);
     </script>
 </body>
 </html>
