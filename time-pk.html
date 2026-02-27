@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>black · white · no scroll · one line</title>
+    <title>full fit · no overlap</title>
     <style>
         /* absolute zero */
         * {
@@ -16,15 +16,15 @@
             background: black;
             width: 100%;
             height: 100vh;
-            height: 100dvh;              /* dynamic viewport */
+            height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Courier New', monospace;
-            overflow: hidden;              /* 🔥 NO SCROLLBARS AT ALL 🔥 */
+            overflow: hidden;
         }
 
-        /* container keeps everything on ONE LINE */
+        /* container fills area but prevents overlap */
         .time-container {
             display: flex;
             align-items: baseline;
@@ -32,60 +32,80 @@
             gap: 0.5vw;
             background: black;
             width: 100%;
-            padding: 0 2vw;                /* tiny side padding, no vertical */
-            line-height: 1;
-            flex-wrap: nowrap;              /* 🔥 CRITICAL: PREVENT WRAPPING 🔥 */
+            height: 100%;
+            padding: 2vh 2vw;              /* safe breathing room */
+            margin: 0;
+            flex-wrap: nowrap;
             white-space: nowrap;
         }
 
-        /* time scales but NEVER wraps */
+        /* time with safe sizing */
         .time {
-            font-size: clamp(2rem, 15vw, 20vh);
+            font-size: clamp(2rem, 15vh, 20vh);  /* controlled growth */
             font-weight: 700;
             color: white;
             background: black;
             letter-spacing: 0.2vw;
             white-space: nowrap;
             line-height: 1;
-            flex-shrink: 1;                  /* can shrink if needed */
-            min-width: 0;                     /* allow shrinking below content */
+            display: flex;
+            align-items: center;
+            flex-shrink: 1;
+            min-width: 0;
+            max-width: 80%;                      /* prevent pushing into AM/PM */
         }
 
-        /* am/pm also stays on same line */
+        /* am/pm with fixed proportion */
         .ampm {
-            font-size: clamp(1.2rem, 7vw, 10vh);
+            font-size: clamp(1.2rem, 6vh, 8vh);  /* always smaller than time */
             font-weight: 400;
             color: white;
             background: black;
             opacity: 0.9;
             white-space: nowrap;
             line-height: 1;
-            flex-shrink: 0;                   /* never shrink the AM/PM */
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            max-width: 20%;                       /* reserve space */
         }
 
-        /* for extremely tiny widths, scale down proportionally */
-        @media (max-width: 200px) {
+        /* ultra wide screens */
+        @media (min-aspect-ratio: 3/1) {
             .time {
-                font-size: 14vw;
+                font-size: 25vh;
+                max-width: 85%;
             }
             .ampm {
-                font-size: 6vw;
+                font-size: 10vh;
+                max-width: 15%;
             }
         }
 
-        /* landscape safety */
-        @media (orientation: landscape) and (max-height: 300px) {
+        /* very tall screens */
+        @media (max-aspect-ratio: 1/2) {
             .time {
-                font-size: 12vh;
+                font-size: 12vw;
+                max-width: 75%;
             }
             .ampm {
-                font-size: 5vh;
+                font-size: 5vw;
+                max-width: 25%;
+            }
+        }
+
+        /* tiny screens safety */
+        @media (max-width: 300px) or (max-height: 300px) {
+            .time {
+                font-size: 12vw;
+            }
+            .ampm {
+                font-size: 5vw;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ONE LINE GUARANTEED: time + AM/PM never wrap -->
     <div class="time-container">
         <span class="time" id="currentTime">12:00:00</span>
         <span class="ampm" id="currentAmPm">PM</span>
