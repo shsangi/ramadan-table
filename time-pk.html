@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>current time only · am below</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>current time · one line · transparent</title>
     <style>
+        /* minimal reset – only what's needed */
         * {
             margin: 0;
             padding: 0;
@@ -12,84 +13,68 @@
         }
 
         body {
-            background: #0A1428;  /* deep night blue */
+            background: transparent;  /* completely transparent background */
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Courier New', monospace;
-            padding: 1rem;
+            padding: 0.5rem;
         }
 
-        .clock-box {
-            background: #121625;
-            border-radius: 2.5rem;
-            padding: 2.8rem 2rem 2.2rem;  /* extra top padding, less bottom to balance am below */
-            border: 2px solid #C9A234;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.8);
-            text-align: center;
-            max-width: 550px;
-            width: 100%;
-            transition: all 0.2s;
-        }
-
-        /* optional subtle icon – keeping the requested minimal look */
-        .icon-row {
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
-            color: #E5C76B;
-            opacity: 0.7;
-            letter-spacing: 8px;
+        /* no box, no card, no border – pure text */
+        .time-container {
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+            background: transparent;
+            line-height: 1;
         }
 
         .time {
-            font-size: clamp(3.5rem, 16vw, 7rem);
-            font-weight: 700;
+            font-size: clamp(2.2rem, 12vw, 6rem);
+            font-weight: 600;
             color: white;
-            line-height: 1.1;
-            text-shadow: 0 0 8px rgba(201, 162, 52, 0.3);
+            text-shadow: 0 0 6px rgba(0,0,0,0.7); /* subtle readability if placed on light bg */
+            background: transparent;
+            letter-spacing: 1px;
         }
 
-        /* AM/PM now lives BELOW the big time, as requested */
-        .ampm-below {
-            font-size: clamp(1.8rem, 6vw, 3rem);
-            color: #E5C76B;
-            font-weight: 500;
-            margin-top: 0.6rem;
-            letter-spacing: 2px;
-            border-top: 1px dashed #C9A234;
-            display: inline-block;
-            padding: 0.8rem 2rem 0.2rem;
+        .ampm {
+            font-size: clamp(1.2rem, 6vw, 2.5rem);
+            font-weight: 400;
+            color: #E5C76B;      /* soft amber, still visible */
+            background: transparent;
+            text-shadow: 0 0 4px rgba(0,0,0,0.6);
+            margin-left: 0.2rem;
         }
 
-        /* no other elements — only current time, am/pm moved out of the line */
+        /* absolutely nothing else – no icon, no box, no borders */
     </style>
 </head>
 <body>
-    <div class="clock-box">
-        <div class="icon-row">⏰ ✦</div>
-        <!-- big time (no am/pm inside) -->
-        <div class="time" id="currentTime">12:00:00</div>
-        <!-- am/pm placed below, completely separate -->
-        <div class="ampm-below" id="currentAmPm">PM</div>
+    <!-- one single line: time + am/pm, transparent background -->
+    <div class="time-container">
+        <span class="time" id="currentTime">12:00:00</span>
+        <span class="ampm" id="currentAmPm">PM</span>
     </div>
 
     <script>
-        // Pakistan time (UTC+5) — exactly as before, only used for current time
+        // Pakistan time (UTC+5) — same reliable function, only used for current time
         function getPakistanTime() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             return new Date(utc + (3600000 * 5)); // UTC+5
         }
 
-        function formatTimeOnly(date) {
+        function formatTimeWithAmPm(date) {
             let hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
             const seconds = date.getSeconds().toString().padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
 
             hours = hours % 12;
-            hours = hours ? hours : 12; // 12-hour format without leading space
+            hours = hours ? hours : 12; // 12-hour format
 
             return {
                 time: `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`,
@@ -99,15 +84,15 @@
 
         function updateDisplay() {
             const now = getPakistanTime();
-            const formatted = formatTimeOnly(now);
+            const formatted = formatTimeWithAmPm(now);
             document.getElementById('currentTime').textContent = formatted.time;
             document.getElementById('currentAmPm').textContent = formatted.ampm;
         }
 
-        // initial update
+        // initial call
         updateDisplay();
 
-        // keep precise time
+        // smooth second update
         setInterval(updateDisplay, 1000);
     </script>
 </body>
