@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Karachi · clock with centered date</title>
+    <style>
+        /* EDGE TO EDGE, ABSOLUTE ZERO MARGIN */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: #000;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* single wrapper fills every pixel */
+        .time-wrapper {
+            background: black;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* container uses flex column to stack time and date,
+           but we want the date to appear INSIDE the clock (below time) */
+        .clock-face {
+            display: flex;
+            flex-direction: column;         /* stack main time and date */
+            align-items: center;
+            justify-content: center;        /* everything centered vertically */
+            background: black;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            transform: scale(1);
+            gap: 0.2vh;                     /* tiny gap between time and date */
+        }
+
+        /* main time row: time + AM/PM */
+        .time-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3vw;
+            flex-wrap: nowrap;
+            width: 100%;
+            line-height: 1;
+        }
+
+        .time-main {
+            color: white;
+            background: black;
+            font-weight: 700;
+            font-size: min(24vw, 32vh);       /* giant time digits */
+            white-space: nowrap;
+            letter-spacing: -0.5vw;
+            line-height: 1;
+            flex-shrink: 1;
+        }
+
+        .ampm-side {
+            color: white;
+            background: black;
+            font-weight: 400;
+            font-size: min(11vw, 16vh);       /* proportional am/pm */
+            opacity: 0.9;
+            white-space: nowrap;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-left: -0.3vw;               /* pull closer to time */
+        }
+
+        /* date line — now directly below time, inside same clock face */
+        .date-inside {
+            color: white;
+            background: black;
+            font-weight: 500;
+            font-size: min(7vw, 10vh);         /* large but subordinate to time */
+            white-space: nowrap;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+            text-align: center;
+            opacity: 0.95;
+            margin-top: -0.5vh;                 /* pull slightly up, feel of “inside” */
+            padding: 0 0.2rem;
+            flex-shrink: 1;
+        }
+
+        /* fine tuning for extreme aspect ratios */
+        @media (max-aspect-ratio: 1/2) {
+            .time-main { font-size: min(20vw, 26vh); }
+            .ampm-side { font-size: min(9vw, 13vh); }
+            .date-inside { font-size: min(6vw, 8vh); }
+        }
+
+        @media (min-aspect-ratio: 4/1) {
+            .time-main { font-size: min(20vw, 38vh); }
+            .ampm-side { font-size: min(9vw, 18vh); }
+            .date-inside { font-size: min(5vw, 12vh); }
+        }
+
+        /* dynamic javascript will also fine-tune per pixel */
+    </style>
+</head>
+<body>
+    <!-- SINGLE LAYER – EDGE TO EDGE, CLOCK FACE WITH DATE INSIDE -->
+    <div class="time-wrapper">
+        <div class="clock-face">
+            <!-- TOP: giant time + AM/PM -->
+            <div class="time-row">
+                <span class="time-main" id="timeDigits">10:10:45</span>
+                <span class="ampm-side" id="ampmIndicator">AM</span>
+            </div>
+            <!-- BOTTOM: date inside clock (directly below) -->
+            <span class="date-inside" id="dateLine">Fri, 27 Feb, 2026</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ----- KARACHI TIME (UTC+5) -----
+            function getKarachiDate() {
+                const now = new Date();
+                const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
+                return new Date(utcMillis + (3600000 * 5));
+            }
+
+            // ----- FORMAT: date as "Fri, 27 Feb, 2026", time as "10:10:45", AM/PM separate -----
+            function formatKarachiComponents() {
+                const d = getKarachiDate();
+
+                // Weekday short
+                const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const weekday = weekdays[d.getDay()];
+
+                // Day
+                const day = d.getDate();
+
+                // Month short
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[d.getMonth()];
+
+                // Year
+                const year = d.getFullYear();
+
+                // Time part (hh:mm:ss)
+                let hours = d.getHours();
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                const seconds = d.getSeconds().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;   // 12-hour format
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+
+                // Full date line: "Fri, 27 Feb, 2026"
+                const dateLine = `${weekday}, ${day} ${month}, ${year}`;
+
+                return {
+                    dateLine: dateLine,
+                    timeDigits: timeString,
+                    ampm: ampm
+                };
+            }
+
+            // ----- UPDATE DOM -----
+            function updateDisplay() {
+                const comp = formatKarachiComponents();
+                document.getElementById('dateLine').textContent = comp.dateLine;
+                document.getElementById('timeDigits').textContent = comp.timeDigits;
+                document.getElementById('ampmIndicator').textContent = comp.ampm;
+            }
+
+            // ----- DYNAMIC FONT SIZING: perfect fit, edge to edge -----
+            function adjustFontSizeToFit() {
+                const container = document.querySelector('.clock-face');
+                const timeSpan = document.getElementById('timeDigits');
+                const ampmSpan = document.getElementById('ampmIndicator');
+                const dateSpan = document.getElementById('dateLine');
+
+                if (!container || !timeSpan || !ampmSpan || !dateSpan) return;
+
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+
+                if (containerWidth <= 10 || containerHeight <= 10) return;
+
+                // base sizes using container dimensions
+                // aim for time ~ 0.4 of height, ampm proportional, date ~0.12 of height
+                let timeBase, ampmBase, dateBase;
+
+                const aspect = containerWidth / containerHeight;
+
+                if (aspect > 2.5) { 
+                    // ultra wide: height limited
+                    timeBase = containerHeight * 0.42;
+                    ampmBase = containerHeight * 0.19;
+                    dateBase = containerHeight * 0.13;
+                } else if (aspect < 0.45) { 
+                    // ultra tall: width limited
+                    timeBase = containerWidth * 0.28;
+                    ampmBase = containerWidth * 0.12;
+                    dateBase = containerWidth * 0.09;
+                } else {
+                    // normal: use height factors
+                    timeBase = containerHeight * 0.4;
+                    ampmBase = containerHeight * 0.17;
+                    dateBase = containerHeight * 0.12;
+                }
+
+                // apply
+                timeSpan.style.fontSize = timeBase + 'px';
+                ampmSpan.style.fontSize = ampmBase + 'px';
+                dateSpan.style.fontSize = dateBase + 'px';
+
+                // fine-tune: ensure time row width doesn't exceed container
+                const timeRow = document.querySelector('.time-row');
+                if (timeRow) {
+                    let rowWidth = timeRow.getBoundingClientRect().width;
+                    if (rowWidth > containerWidth * 0.98) {
+                        const ratio = (containerWidth * 0.95) / rowWidth;
+                        const newTimeSize = parseFloat(timeSpan.style.fontSize) * ratio;
+                        const newAmpmSize = parseFloat(ampmSpan.style.fontSize) * ratio;
+                        timeSpan.style.fontSize = newTimeSize + 'px';
+                        ampmSpan.style.fontSize = newAmpmSize + 'px';
+                    }
+                }
+
+                // ensure date fits
+                if (dateSpan.scrollWidth > containerWidth * 0.98) {
+                    const ratio = (containerWidth * 0.95) / dateSpan.scrollWidth;
+                    dateSpan.style.fontSize = (parseFloat(dateSpan.style.fontSize) * ratio) + 'px';
+                }
+
+                // tiny optical adjustment: keep date close to time
+                dateSpan.style.marginTop = '-0.8vh';
+            }
+
+            // initial update
+            updateDisplay();
+
+            // event listeners
+            window.addEventListener('load', () => {
+                updateDisplay();
+                adjustFontSizeToFit();
+            });
+
+            window.addEventListener('resize', adjustFontSizeToFit);
+
+            // update time every second
+            setInterval(() => {
+                updateDisplay();
+                adjustFontSizeToFit();   // also adjust size in case digits change width
+            }, 1000);
+
+            // extra safety for orientation changes
+            setInterval(adjustFontSizeToFit, 200);
+        })();
+    </script>
+</body>
+</html>
