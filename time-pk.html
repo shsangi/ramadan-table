@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>current time · pure transparent</title>
+    <title>black bg · white time</title>
     <style>
-        /* Force everything to be transparent */
+        /* solid black background, white text */
         * {
             margin: 0;
             padding: 0;
@@ -13,48 +13,47 @@
         }
 
         html, body {
-            background: transparent !important;
-            background-color: transparent !important;
+            background: black !important;
+            background-color: black !important;
             min-height: 100vh;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Courier New', monospace;
         }
 
-        /* no background whatsoever */
         .time-container {
             display: flex;
             align-items: baseline;
             gap: 0.25rem;
-            background: transparent;
+            background: black;
             line-height: 1;
         }
 
         .time {
-            font-size: clamp(2.2rem, 12vw, 6rem);
+            font-size: clamp(2.5rem, 15vw, 8rem);
             font-weight: 600;
-            color: white;
-            background: transparent;
-            letter-spacing: 1px;
-            /* optional thin outline for readability if behind content */
-            text-shadow: 0 0 4px rgba(0,0,0,0.5);
+            color: white;              /* pure white */
+            background: black;
+            letter-spacing: 2px;
+            text-shadow: none;          /* no shadow, clean white on black */
         }
 
         .ampm {
-            font-size: clamp(1.2rem, 6vw, 2.5rem);
+            font-size: clamp(1.3rem, 7vw, 3rem);
             font-weight: 400;
-            color: #E5C76B;
-            background: transparent;
-            margin-left: 0.2rem;
-            text-shadow: 0 0 4px rgba(0,0,0,0.5);
+            color: white;              /* also white, but softer weight */
+            background: black;
+            margin-left: 0.3rem;
+            opacity: 0.9;               /* slightly subtle but still white */
         }
 
-        /* absolutely no background, no box, no nothing */
+        /* absolutely no other elements — only time + ampm */
     </style>
 </head>
 <body>
-    <!-- one single line: time + am/pm, fully transparent background -->
+    <!-- one line: big time + AM/PM, black background, white fonts -->
     <div class="time-container">
         <span class="time" id="currentTime">12:00:00</span>
         <span class="ampm" id="currentAmPm">PM</span>
