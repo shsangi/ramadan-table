@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Karachi clock · transparent background</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karachi clock · transparent</title>
     <style>
-        /* ABSOLUTE ZERO — edge to edge, full stretch, now TRANSPARENT */
         * {
             margin: 0;
             padding: 0;
@@ -13,282 +12,129 @@
         }
 
         html, body {
-            background: transparent;  /* let underlying page show */
+            background: transparent !important;
+            background-color: transparent !important;
             width: 100%;
             height: 100vh;
-            height: 100dvh;
             display: flex;
             overflow: hidden;
             font-family: 'Courier New', monospace;
         }
 
-        /* one layer — stretches to every pixel, background gone */
         .time-wrapper {
-            background: transparent;
+            background: transparent !important;
             width: 100%;
             height: 100%;
             display: flex;
             align-items: stretch;
             justify-content: stretch;
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
         }
 
-        /* container fills 100% width/height, centers content, no background */
         .time-container {
             display: flex;
-            flex-direction: column;          /* stack date and time vertically */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: transparent;
+            background: transparent !important;
             width: 100%;
             height: 100%;
-            flex-wrap: nowrap;
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
-            transform: scale(1);
-            gap: 0.05vh;                     /* tiny gap between lines, still edge */
+            gap: 0.05vh;
         }
 
-        /* main block: date line + time line + am/pm (inline with time) */
         .date-block {
-            color: white;
-            background: transparent;          /* was black */
+            color: #ffffff;
+            background: transparent !important;
             font-weight: 500;
-            font-size: min(14vw, 18vh);      /* aggressively large, but stays inside */
+            font-size: min(14vw, 18vh);
             white-space: nowrap;
             line-height: 1.1;
             letter-spacing: -0.02em;
             text-align: center;
             width: 100%;
-            padding: 0 0.1rem;                /* negligible, prevents clipping */
-            margin: 0;
-            flex-shrink: 1;
-            text-shadow: 0 0 8px rgba(0,0,0,0.7); /* subtle shadow so white text works on light bg too */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* row that contains time + AM/PM side by side */
         .time-row {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
             gap: 0.2vw;
-            flex-wrap: nowrap;
             width: 100%;
-            line-height: 1;
+            background: transparent !important;
         }
 
         .time-main {
-            color: white;
-            background: transparent;          /* was black */
+            color: #ffffff;
+            background: transparent !important;
             font-weight: 700;
-            font-size: min(22vw, 28vh);       /* giant time digits */
+            font-size: min(22vw, 28vh);
             white-space: nowrap;
             letter-spacing: -0.5vw;
             line-height: 1;
-            flex-shrink: 1;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .ampm-side {
-            color: white;
-            background: transparent;          /* was black */
+            color: #ffffff;
+            background: transparent !important;
             font-weight: 400;
-            font-size: min(10vw, 14vh);       /* proportional but clearly am/pm */
+            font-size: min(10vw, 14vh);
             opacity: 0.95;
             white-space: nowrap;
             line-height: 1;
-            flex-shrink: 0;
-            margin-left: -0.3vw;               /* pulls closer to time */
-            text-shadow: 0 0 6px rgba(0,0,0,0.7);
+            margin-left: -0.3vw;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-
-        /* tiny extra adjustment for very narrow */
-        @media (max-aspect-ratio: 1/2) {
-            .date-block { font-size: min(10vw, 12vh); }
-            .time-main { font-size: min(18vw, 24vh); }
-            .ampm-side { font-size: min(8vw, 11vh); }
-        }
-
-        /* very wide screens -> keep everything edge but balanced */
-        @media (min-aspect-ratio: 4/1) {
-            .date-block { font-size: min(12vw, 16vh); }
-            .time-main { font-size: min(20vw, 32vh); }
-            .ampm-side { font-size: min(9vw, 15vh); }
-        }
-
-        /* dynamic javascript will also tune per pixel, but css keeps fallback */
     </style>
 </head>
 <body>
-    <!-- SINGLE LAYER – STRETCHED EDGE TO EDGE, NO BLACK FILL -->
     <div class="time-wrapper">
         <div class="time-container">
-            <!-- DATE LINE: Fri, 27 Feb, 2026 (dynamic) -->
-            <span class="date-block" id="dateLine">Fri, 27 Feb, 2026</span>
-            <!-- TIME ROW: 10:10:45 + AM/PM -->
+            <span class="date-block" id="dateLine"></span>
             <div class="time-row">
-                <span class="time-main" id="timeDigits">10:10:45</span>
-                <span class="ampm-side" id="ampmIndicator">AM</span>
+                <span class="time-main" id="timeDigits"></span>
+                <span class="ampm-side" id="ampmIndicator"></span>
             </div>
         </div>
     </div>
 
     <script>
-        (function() {
-            "use strict";
+        function getKarachiDate() {
+            const now = new Date();
+            const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utcMillis + (3600000 * 5));
+        }
 
-            // ----- PAKISTAN (KARACHI) TIME OFFSET: UTC+5 -----
-            function getKarachiDate() {
-                const now = new Date();
-                // get current UTC time in milliseconds, then add 5h (5*3600*1000)
-                const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
-                return new Date(utcMillis + (3600000 * 5));
-            }
+        function formatKarachiComponents() {
+            const d = getKarachiDate();
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const weekday = weekdays[d.getDay()];
+            const day = d.getDate();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = months[d.getMonth()];
+            const year = d.getFullYear();
+            
+            let hours = d.getHours();
+            const minutes = d.getMinutes().toString().padStart(2, '0');
+            const seconds = d.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+            const dateLine = `${weekday}, ${day} ${month}, ${year}`;
 
-            // ----- FORMAT: "Fri, 27 Feb, 2026, 10:10:45 AM" (but date and time split) -----
-            function formatKarachiComponents() {
-                const d = getKarachiDate();
+            return { dateLine, timeDigits: timeString, ampm };
+        }
 
-                // Weekday short
-                const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const weekday = weekdays[d.getDay()];
+        function updateDisplay() {
+            const comp = formatKarachiComponents();
+            document.getElementById('dateLine').textContent = comp.dateLine;
+            document.getElementById('timeDigits').textContent = comp.timeDigits;
+            document.getElementById('ampmIndicator').textContent = comp.ampm;
+        }
 
-                // Day
-                const day = d.getDate();
-
-                // Month short
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const month = months[d.getMonth()];
-
-                // Year
-                const year = d.getFullYear();
-
-                // Time part (hh:mm:ss)
-                let hours = d.getHours();
-                const minutes = d.getMinutes().toString().padStart(2, '0');
-                const seconds = d.getSeconds().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;   // convert 0 to 12
-                const timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
-
-                // Full date line: "Fri, 27 Feb, 2026"
-                const dateLine = `${weekday}, ${day} ${month}, ${year}`;
-
-                return {
-                    dateLine: dateLine,
-                    timeDigits: timeString,
-                    ampm: ampm
-                };
-            }
-
-            // ----- UPDATE DOM -----
-            function updateDisplay() {
-                const comp = formatKarachiComponents();
-                document.getElementById('dateLine').textContent = comp.dateLine;
-                document.getElementById('timeDigits').textContent = comp.timeDigits;
-                document.getElementById('ampmIndicator').textContent = comp.ampm;
-            }
-
-            // ----- DYNAMIC FONT SIZING: make everything fill edge without overflow -----
-            function adjustFontSizeToFit() {
-                const container = document.querySelector('.time-container');
-                const dateSpan = document.getElementById('dateLine');
-                const timeSpan = document.getElementById('timeDigits');
-                const ampmSpan = document.getElementById('ampmIndicator');
-
-                if (!container || !dateSpan || !timeSpan || !ampmSpan) return;
-
-                // we need to measure container dimensions
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
-
-                if (containerWidth <= 10 || containerHeight <= 10) return;
-
-                // we have two lines: date (top) and time-row (bottom)
-                // we will assign a relative size using vh/vw approximation,
-                // but we also measure via scaling factor.
-
-                // Determine base size: use smaller dimension for square, but adapt to width for wide.
-                const aspect = containerWidth / containerHeight;
-
-                let dateBase, timeBase, ampmBase;
-
-                if (aspect > 2.2) { 
-                    // extremely wide: width driven, limit by height.
-                    dateBase = containerHeight * 0.23;
-                    timeBase = containerHeight * 0.38;
-                    ampmBase = containerHeight * 0.18;
-                } else if (aspect < 0.45) { 
-                    // extremely tall: width is limiting
-                    dateBase = containerWidth * 0.16;
-                    timeBase = containerWidth * 0.28;
-                    ampmBase = containerWidth * 0.13;
-                } else {
-                    // balanced: use height * factor, but also check width later.
-                    dateBase = containerHeight * 0.2;
-                    timeBase = containerHeight * 0.34;
-                    ampmBase = containerHeight * 0.16;
-                }
-
-                // apply but ensure no overflow: test width with a rough estimate.
-                dateSpan.style.fontSize = dateBase + 'px';
-                timeSpan.style.fontSize = timeBase + 'px';
-                ampmSpan.style.fontSize = ampmBase + 'px';
-
-                // also ensure total width of time-row does not exceed containerWidth.
-                const timeRow = document.querySelector('.time-row');
-                if (timeRow) {
-                    // we allow slight negative margin, but if too wide, reduce font size.
-                    let rowWidth = timeRow.getBoundingClientRect().width;
-                    if (rowWidth > containerWidth * 0.98) { // only if essentially wider
-                        const ratio = (containerWidth * 0.95) / rowWidth;
-                        // reduce time and ampm proportionally
-                        const newTimeSize = parseFloat(timeSpan.style.fontSize) * ratio * 0.98;
-                        const newAmpmSize = parseFloat(ampmSpan.style.fontSize) * ratio * 0.98;
-                        timeSpan.style.fontSize = newTimeSize + 'px';
-                        ampmSpan.style.fontSize = newAmpmSize + 'px';
-                    }
-                }
-
-                // also check date line width
-                if (dateSpan.scrollWidth > containerWidth * 0.98) {
-                    const ratio = (containerWidth * 0.95) / dateSpan.scrollWidth;
-                    dateSpan.style.fontSize = (parseFloat(dateSpan.style.fontSize) * ratio) + 'px';
-                }
-
-                // ensure line-height not clipping
-                dateSpan.style.lineHeight = '1.1';
-                timeSpan.style.lineHeight = '1';
-                ampmSpan.style.lineHeight = '1';
-            }
-
-            // initial update
-            updateDisplay();
-
-            // event listeners
-            window.addEventListener('load', () => {
-                updateDisplay();
-                adjustFontSizeToFit();
-            });
-
-            window.addEventListener('resize', () => {
-                adjustFontSizeToFit();
-            });
-
-            // update time every second
-            setInterval(() => {
-                updateDisplay();
-                // also adjust size after content change (seconds change width slightly)
-                adjustFontSizeToFit();
-            }, 1000);
-
-            // also keep adjusting at short interval for safety (orientation changes etc)
-            setInterval(adjustFontSizeToFit, 200);
-        })();
+        updateDisplay();
+        setInterval(updateDisplay, 1000);
     </script>
 </body>
 </html>
