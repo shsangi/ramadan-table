@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>full stretch · edge to edge</title>
+    <title>Karachi · full edge clock · Fri, 27 Feb, 2026, 10:10:45 AM</title>
     <style>
-        /* ABSOLUTE ZERO MARGINS */
+        /* ABSOLUTE ZERO — edge to edge, full stretch */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +13,7 @@
         }
 
         html, body {
-            background: black;
+            background: #000;
             width: 100%;
             height: 100vh;
             height: 100dvh;
@@ -22,202 +22,280 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* SINGLE LAYER - FULL STRETCH */
+        /* one layer — stretches to every pixel */
         .time-wrapper {
             background: black;
             width: 100%;
             height: 100%;
             display: flex;
-            align-items: stretch;        /* stretch vertically */
-            justify-content: stretch;    /* stretch horizontally */
+            align-items: stretch;
+            justify-content: stretch;
             overflow: hidden;
-            padding: 0;                  /* no padding */
-            margin: 0;                   /* no margin */
+            padding: 0;
+            margin: 0;
         }
 
-        /* CONTAINER FILLS EVERY PIXEL */
+        /* container fills 100% width/height, centers content */
         .time-container {
             display: flex;
-            align-items: center;          /* vertical center */
-            justify-content: center;      /* horizontal center */
-            gap: 0;                       /* no gap */
+            flex-direction: column;          /* stack date and time vertically */
+            align-items: center;
+            justify-content: center;
             background: black;
             width: 100%;
             height: 100%;
             flex-wrap: nowrap;
-            white-space: nowrap;
             overflow: hidden;
             padding: 0;
             margin: 0;
-            transform: scale(1);           /* prevent scaling artifacts */
-        }
-
-        /* TIME STRETCHES TO MAXIMUM */
-        .time {
-            font-size: 100vh;              /* base: full height */
-            font-weight: 700;
-            color: white;
-            background: black;
-            letter-spacing: -0.5vw;        /* tighten spacing */
-            white-space: nowrap;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            flex-shrink: 1;
-            min-width: 0;
             transform: scale(1);
-            margin: 0 -0.1vw;               /* micro adjustment for edges */
-            text-rendering: optimizeLegibility;
+            gap: 0.05vh;                     /* tiny gap between lines, still edge */
         }
 
-        /* AM/PM STRETCHES PROPORTIONALLY */
-        .ampm {
-            font-size: 40vh;                /* 40% of time height */
-            font-weight: 400;
+        /* main block: date line + time line + am/pm (inline with time) */
+        .date-block {
             color: white;
             background: black;
-            opacity: 0.95;
+            font-weight: 500;
+            font-size: min(14vw, 18vh);      /* aggressively large, but stays inside */
             white-space: nowrap;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            flex-shrink: 0;
-            margin-left: -0.2vw;            /* pull closer */
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            text-align: center;
+            width: 100%;
+            padding: 0 0.1rem;                /* negligible, prevents clipping */
+            margin: 0;
+            flex-shrink: 1;
         }
 
-        /* DYNAMIC SIZING WITH JAVASCRIPT PRECISION */
-        .dynamic-size {
-            width: 100%;
-            height: 100%;
+        /* row that contains time + AM/PM side by side */
+        .time-row {
             display: flex;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
+            gap: 0.2vw;
+            flex-wrap: nowrap;
+            width: 100%;
+            line-height: 1;
         }
 
-        /* ULTRA WIDE - USE FULL WIDTH */
-        @media (min-aspect-ratio: 3/1) {
-            .time {
-                font-size: 110vh;            /* even bigger for wide */
-                letter-spacing: -1vw;
-            }
-            .ampm {
-                font-size: 44vh;
-            }
+        .time-main {
+            color: white;
+            background: black;
+            font-weight: 700;
+            font-size: min(22vw, 28vh);       /* giant time digits */
+            white-space: nowrap;
+            letter-spacing: -0.5vw;
+            line-height: 1;
+            flex-shrink: 1;
         }
 
-        /* ULTRA TALL - USE FULL HEIGHT WITH WIDTH CONSTRAINT */
-        @media (max-aspect-ratio: 1/3) {
-            .time {
-                font-size: 90vw;              /* switch to width-based */
-            }
-            .ampm {
-                font-size: 36vw;
-            }
+        .ampm-side {
+            color: white;
+            background: black;
+            font-weight: 400;
+            font-size: min(10vw, 14vh);       /* proportional but clearly am/pm */
+            opacity: 0.9;
+            white-space: nowrap;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-left: -0.3vw;               /* pulls closer to time */
         }
 
-        /* PERFECT SQUARE ADJUSTMENT */
-        @media (aspect-ratio: 1/1) {
-            .time {
-                font-size: 95vh;
-            }
-            .ampm {
-                font-size: 38vh;
-            }
+        /* tiny extra adjustment for very narrow */
+        @media (max-aspect-ratio: 1/2) {
+            .date-block { font-size: min(10vw, 12vh); }
+            .time-main { font-size: min(18vw, 24vh); }
+            .ampm-side { font-size: min(8vw, 11vh); }
         }
 
-        /* TINY SCREENS - EDGE TO EDGE */
-        @media (max-width: 300px) or (max-height: 300px) {
-            .time {
-                font-size: 90vw;
-                letter-spacing: -0.8vw;
-            }
-            .ampm {
-                font-size: 36vw;
-            }
+        /* very wide screens -> keep everything edge but balanced */
+        @media (min-aspect-ratio: 4/1) {
+            .date-block { font-size: min(12vw, 16vh); }
+            .time-main { font-size: min(20vw, 32vh); }
+            .ampm-side { font-size: min(9vw, 15vh); }
         }
+
+        /* dynamic javascript will also tune per pixel, but css keeps fallback */
     </style>
 </head>
 <body>
-    <!-- SINGLE LAYER - STRETCHED TO EDGES -->
+    <!-- SINGLE LAYER – STRETCHED EDGE TO EDGE -->
     <div class="time-wrapper">
         <div class="time-container">
-            <span class="time" id="currentTime">12:00:00</span>
-            <span class="ampm" id="currentAmPm">PM</span>
+            <!-- DATE LINE: Fri, 27 Feb, 2026 (dynamic) -->
+            <span class="date-block" id="dateLine">Fri, 27 Feb, 2026</span>
+            <!-- TIME ROW: 10:10:45 + AM/PM -->
+            <div class="time-row">
+                <span class="time-main" id="timeDigits">10:10:45</span>
+                <span class="ampm-side" id="ampmIndicator">AM</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // PAKISTAN TIME (UTC+5)
-        function getPakistanTime() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            return new Date(utc + (3600000 * 5));
-        }
+        (function() {
+            "use strict";
 
-        // FORMAT TIME WITH AM/PM
-        function formatTimeWithAmPm(date) {
-            let hours = date.getHours();
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            const seconds = date.getSeconds().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12;
-            return {
-                time: `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`,
-                ampm: ampm
-            };
-        }
-
-        // UPDATE DISPLAY
-        function updateDisplay() {
-            const now = getPakistanTime();
-            const formatted = formatTimeWithAmPm(now);
-            document.getElementById('currentTime').textContent = formatted.time;
-            document.getElementById('currentAmPm').textContent = formatted.ampm;
-        }
-
-        // DYNAMIC RESIZE FOR PERFECT FIT
-        function adjustFontSize() {
-            const container = document.querySelector('.time-container');
-            const time = document.querySelector('.time');
-            const ampm = document.querySelector('.ampm');
-            
-            if (!container || !time || !ampm) return;
-            
-            const containerWidth = container.offsetWidth;
-            const containerHeight = container.offsetHeight;
-            
-            // Choose primary dimension based on aspect ratio
-            if (containerWidth > containerHeight * 1.5) {
-                // Wide: use height
-                time.style.fontSize = (containerHeight * 0.95) + 'px';
-                ampm.style.fontSize = (containerHeight * 0.38) + 'px';
-            } else if (containerHeight > containerWidth * 1.5) {
-                // Tall: use width
-                time.style.fontSize = (containerWidth * 0.9) + 'px';
-                ampm.style.fontSize = (containerWidth * 0.36) + 'px';
-            } else {
-                // Square-ish: use smaller dimension
-                const base = Math.min(containerWidth, containerHeight);
-                time.style.fontSize = (base * 0.95) + 'px';
-                ampm.style.fontSize = (base * 0.38) + 'px';
+            // ----- PAKISTAN (KARACHI) TIME OFFSET: UTC+5 -----
+            function getKarachiDate() {
+                const now = new Date();
+                // get current UTC time in milliseconds, then add 5h (5*3600*1000)
+                const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
+                return new Date(utcMillis + (3600000 * 5));
             }
-        }
 
-        // Call on load and resize
-        window.addEventListener('load', () => {
+            // ----- FORMAT: "Fri, 27 Feb, 2026, 10:10:45 AM" (but date and time split) -----
+            function formatKarachiComponents() {
+                const d = getKarachiDate();
+
+                // Weekday short
+                const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const weekday = weekdays[d.getDay()];
+
+                // Day
+                const day = d.getDate();
+
+                // Month short
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[d.getMonth()];
+
+                // Year
+                const year = d.getFullYear();
+
+                // Time part (hh:mm:ss)
+                let hours = d.getHours();
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                const seconds = d.getSeconds().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;   // convert 0 to 12
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+
+                // Full date line: "Fri, 27 Feb, 2026"
+                const dateLine = `${weekday}, ${day} ${month}, ${year}`;
+
+                return {
+                    dateLine: dateLine,
+                    timeDigits: timeString,
+                    ampm: ampm
+                };
+            }
+
+            // ----- UPDATE DOM -----
+            function updateDisplay() {
+                const comp = formatKarachiComponents();
+                document.getElementById('dateLine').textContent = comp.dateLine;
+                document.getElementById('timeDigits').textContent = comp.timeDigits;
+                document.getElementById('ampmIndicator').textContent = comp.ampm;
+            }
+
+            // ----- DYNAMIC FONT SIZING: make everything fill edge without overflow -----
+            function adjustFontSizeToFit() {
+                const container = document.querySelector('.time-container');
+                const dateSpan = document.getElementById('dateLine');
+                const timeSpan = document.getElementById('timeDigits');
+                const ampmSpan = document.getElementById('ampmIndicator');
+
+                if (!container || !dateSpan || !timeSpan || !ampmSpan) return;
+
+                // we need to measure container dimensions
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+
+                if (containerWidth <= 10 || containerHeight <= 10) return;
+
+                // we have two lines: date (top) and time-row (bottom)
+                // we will assign a relative size using vh/vw approximation,
+                // but we also measure via scaling factor.
+
+                // Set default relative values: date line ~ 0.22 * minDimension, time digits ~0.35 * minDimension, ampm ~0.18
+                // but keep within width.
+                // we try a more robust approach: set font sizes using px based on container.
+
+                // Determine base size: use smaller dimension for square, but adapt to width for wide.
+                const aspect = containerWidth / containerHeight;
+
+                let dateBase, timeBase, ampmBase;
+
+                if (aspect > 2.2) { 
+                    // extremely wide: width driven, limit by height.
+                    dateBase = containerHeight * 0.23;
+                    timeBase = containerHeight * 0.38;
+                    ampmBase = containerHeight * 0.18;
+                } else if (aspect < 0.45) { 
+                    // extremely tall: width is limiting
+                    dateBase = containerWidth * 0.16;
+                    timeBase = containerWidth * 0.28;
+                    ampmBase = containerWidth * 0.13;
+                } else {
+                    // balanced: use height * factor, but also check width later.
+                    dateBase = containerHeight * 0.2;
+                    timeBase = containerHeight * 0.34;
+                    ampmBase = containerHeight * 0.16;
+                }
+
+                // apply but ensure no overflow: test width with a rough estimate.
+                // we will measure text width using a quick canvas? but for performance we do approximate: if too wide, scale down iteratively.
+                // but we can also use a safe factor: cap using container width divided by text length.
+                // simpler: we use a safe inline scaling by wrapping and using JS less aggressively, but we already have fallback CSS.
+                // let's combine with viewport units fine-tuning — set font sizes as px, and then if overflow scroll? no scroll hidden.
+                // we trust the css media queries, plus apply fine-tuning.
+                dateSpan.style.fontSize = dateBase + 'px';
+                timeSpan.style.fontSize = timeBase + 'px';
+                ampmSpan.style.fontSize = ampmBase + 'px';
+
+                // but we also ensure total width of time-row does not exceed containerWidth.
+                // use getBoundingClientRect for actual width, shrink if necessary.
+                const timeRow = document.querySelector('.time-row');
+                if (timeRow) {
+                    // we allow slight negative margin, but if too wide, reduce font size.
+                    let rowWidth = timeRow.getBoundingClientRect().width;
+                    if (rowWidth > containerWidth * 0.98) { // only if essentially wider
+                        const ratio = (containerWidth * 0.95) / rowWidth;
+                        // reduce time and ampm proportionally
+                        const newTimeSize = parseFloat(timeSpan.style.fontSize) * ratio * 0.98;
+                        const newAmpmSize = parseFloat(ampmSpan.style.fontSize) * ratio * 0.98;
+                        timeSpan.style.fontSize = newTimeSize + 'px';
+                        ampmSpan.style.fontSize = newAmpmSize + 'px';
+                    }
+                }
+
+                // also check date line width
+                if (dateSpan.scrollWidth > containerWidth * 0.98) {
+                    const ratio = (containerWidth * 0.95) / dateSpan.scrollWidth;
+                    dateSpan.style.fontSize = (parseFloat(dateSpan.style.fontSize) * ratio) + 'px';
+                }
+
+                // ensure line-height not clipping
+                dateSpan.style.lineHeight = '1.1';
+                timeSpan.style.lineHeight = '1';
+                ampmSpan.style.lineHeight = '1';
+            }
+
+            // initial update
             updateDisplay();
-            adjustFontSize();
-        });
-        
-        window.addEventListener('resize', adjustFontSize);
-        
-        // Update time every second
-        setInterval(updateDisplay, 1000);
-        
-        // Also adjust size if content changes (every second)
-        setInterval(adjustFontSize, 100);
+
+            // event listeners
+            window.addEventListener('load', () => {
+                updateDisplay();
+                adjustFontSizeToFit();
+            });
+
+            window.addEventListener('resize', () => {
+                adjustFontSizeToFit();
+            });
+
+            // update time every second
+            setInterval(() => {
+                updateDisplay();
+                // also adjust size after content change (seconds change width slightly)
+                adjustFontSizeToFit();
+            }, 1000);
+
+            // also keep adjusting at short interval for safety (orientation changes etc)
+            setInterval(adjustFontSizeToFit, 200);
+        })();
     </script>
 </body>
 </html>
