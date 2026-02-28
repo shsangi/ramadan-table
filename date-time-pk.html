@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Karachi clock · transparent background</title>
+    <title>Karachi · full edge clock · Fri, 27 Feb, 2026, 10:10:45 AM</title>
     <style>
-        /* ABSOLUTE ZERO — edge to edge, full stretch, now TRANSPARENT */
+        /* ABSOLUTE ZERO — edge to edge, full stretch */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +13,7 @@
         }
 
         html, body {
-            background: transparent;  /* let underlying page show */
+            background: #000;
             width: 100%;
             height: 100vh;
             height: 100dvh;
@@ -22,9 +22,9 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* one layer — stretches to every pixel, background gone */
+        /* one layer — stretches to every pixel */
         .time-wrapper {
-            background: transparent;
+            background: black;
             width: 100%;
             height: 100%;
             display: flex;
@@ -35,13 +35,13 @@
             margin: 0;
         }
 
-        /* container fills 100% width/height, centers content, no background */
+        /* container fills 100% width/height, centers content */
         .time-container {
             display: flex;
             flex-direction: column;          /* stack date and time vertically */
             align-items: center;
             justify-content: center;
-            background: transparent;
+            background: black;
             width: 100%;
             height: 100%;
             flex-wrap: nowrap;
@@ -55,7 +55,7 @@
         /* main block: date line + time line + am/pm (inline with time) */
         .date-block {
             color: white;
-            background: transparent;          /* was black */
+            background: black;
             font-weight: 500;
             font-size: min(14vw, 18vh);      /* aggressively large, but stays inside */
             white-space: nowrap;
@@ -66,7 +66,6 @@
             padding: 0 0.1rem;                /* negligible, prevents clipping */
             margin: 0;
             flex-shrink: 1;
-            text-shadow: 0 0 8px rgba(0,0,0,0.7); /* subtle shadow so white text works on light bg too */
         }
 
         /* row that contains time + AM/PM side by side */
@@ -83,27 +82,25 @@
 
         .time-main {
             color: white;
-            background: transparent;          /* was black */
+            background: black;
             font-weight: 700;
             font-size: min(22vw, 28vh);       /* giant time digits */
             white-space: nowrap;
             letter-spacing: -0.5vw;
             line-height: 1;
             flex-shrink: 1;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
         .ampm-side {
             color: white;
-            background: transparent;          /* was black */
+            background: black;
             font-weight: 400;
             font-size: min(10vw, 14vh);       /* proportional but clearly am/pm */
-            opacity: 0.95;
+            opacity: 0.9;
             white-space: nowrap;
             line-height: 1;
             flex-shrink: 0;
             margin-left: -0.3vw;               /* pulls closer to time */
-            text-shadow: 0 0 6px rgba(0,0,0,0.7);
         }
 
         /* tiny extra adjustment for very narrow */
@@ -124,7 +121,7 @@
     </style>
 </head>
 <body>
-    <!-- SINGLE LAYER – STRETCHED EDGE TO EDGE, NO BLACK FILL -->
+    <!-- SINGLE LAYER – STRETCHED EDGE TO EDGE -->
     <div class="time-wrapper">
         <div class="time-container">
             <!-- DATE LINE: Fri, 27 Feb, 2026 (dynamic) -->
@@ -212,6 +209,10 @@
                 // we will assign a relative size using vh/vw approximation,
                 // but we also measure via scaling factor.
 
+                // Set default relative values: date line ~ 0.22 * minDimension, time digits ~0.35 * minDimension, ampm ~0.18
+                // but keep within width.
+                // we try a more robust approach: set font sizes using px based on container.
+
                 // Determine base size: use smaller dimension for square, but adapt to width for wide.
                 const aspect = containerWidth / containerHeight;
 
@@ -235,11 +236,17 @@
                 }
 
                 // apply but ensure no overflow: test width with a rough estimate.
+                // we will measure text width using a quick canvas? but for performance we do approximate: if too wide, scale down iteratively.
+                // but we can also use a safe factor: cap using container width divided by text length.
+                // simpler: we use a safe inline scaling by wrapping and using JS less aggressively, but we already have fallback CSS.
+                // let's combine with viewport units fine-tuning — set font sizes as px, and then if overflow scroll? no scroll hidden.
+                // we trust the css media queries, plus apply fine-tuning.
                 dateSpan.style.fontSize = dateBase + 'px';
                 timeSpan.style.fontSize = timeBase + 'px';
                 ampmSpan.style.fontSize = ampmBase + 'px';
 
-                // also ensure total width of time-row does not exceed containerWidth.
+                // but we also ensure total width of time-row does not exceed containerWidth.
+                // use getBoundingClientRect for actual width, shrink if necessary.
                 const timeRow = document.querySelector('.time-row');
                 if (timeRow) {
                     // we allow slight negative margin, but if too wide, reduce font size.
